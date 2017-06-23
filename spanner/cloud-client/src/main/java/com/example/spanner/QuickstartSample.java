@@ -25,6 +25,8 @@ import com.google.cloud.spanner.Spanner;
 import com.google.cloud.spanner.SpannerOptions;
 import com.google.cloud.spanner.Statement;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * A quick start code for Cloud Spanner. It demonstrates how to setup the Cloud Spanner client and
  * execute a simple query using it against an existing database.
@@ -36,19 +38,38 @@ public class QuickstartSample {
       System.err.println("Usage: QuickStartSample <instance_id> <database_id>");
       return;
     }
+    long tp1 = System.nanoTime();
     // Instantiates a client
     SpannerOptions options = SpannerOptions.newBuilder().build();
     Spanner spanner = options.getService();
+    long tp2 = System.nanoTime();
+    System.out.println("--- " + new Long(TimeUnit.NANOSECONDS.toMillis(tp2-tp1)).toString() + " millisec");
+
 
     // Name of your instance & database.
     String instanceId = args[0];
     String databaseId = args[1];
     try {
+      long tp3 = System.nanoTime();
       // Creates a database client
       DatabaseClient dbClient = spanner.getDatabaseClient(DatabaseId.of(
           options.getProjectId(), instanceId, databaseId));
+      long tp4 = System.nanoTime();
+      System.out.println("--- " + new Long(TimeUnit.NANOSECONDS.toMillis(tp4-tp3)).toString() + " millisec");
+
+      long tp5 = System.nanoTime();
       // Queries the database
       ResultSet resultSet = dbClient.singleUse().executeQuery(Statement.of("SELECT 1"));
+      long tp6 = System.nanoTime();
+      System.out.println("--- " + new Long(TimeUnit.NANOSECONDS.toMillis(tp6-tp5)).toString() + " millisec");
+
+
+      long tp7 = System.nanoTime();
+      // Queries the database
+      ResultSet resultSet2 = dbClient.singleUse().executeQuery(Statement.of("SELECT 1"));
+      long tp8 = System.nanoTime();
+      System.out.println("--- " + new Long(TimeUnit.NANOSECONDS.toMillis(tp8-tp7)).toString() + " millisec");
+
 
       System.out.println("\n\nResults:");
       // Prints the results
